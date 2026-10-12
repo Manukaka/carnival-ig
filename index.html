@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="mr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carnival IG Auto</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--bg:#f6f3ef;--card:#fff;--ink:#1d1a17;--mute:#6f675f;--line:#e4ddd4;--brand:#7a1e48;--brand2:#a8325f;--ok:#1d7a4a;--warn:#b26a00;--err:#b3261e}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141210;--card:#1e1b18;--ink:#f1ece6;--mute:#a59c92;--line:#332e29;--brand:#d9628f;--brand2:#e57fa6}}
+:root[data-theme="dark"]{--bg:#141210;--card:#1e1b18;--ink:#f1ece6;--mute:#a59c92;--line:#332e29;--brand:#d9628f;--brand2:#e57fa6}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Noto Sans Devanagari",sans-serif}
+header{background:var(--brand);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+header b{font-size:17px;letter-spacing:.3px}header span{font-size:12px;opacity:.85}
+nav{display:flex;gap:6px;padding:10px 16px;position:sticky;top:0;background:var(--bg);z-index:2;border-bottom:1px solid var(--line)}
+nav button{flex:1;padding:9px 4px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font-weight:600}
+nav button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+main{max-width:640px;margin:0 auto;padding:14px 16px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+label{display:block;font-weight:600;margin:10px 0 4px}small,.mute{color:var(--mute);font-size:12.5px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:150px;resize:vertical}
+.btn{display:inline-block;width:100%;padding:12px;border:0;border-radius:12px;background:var(--brand);color:#fff;font-weight:700;font-size:16px;margin-top:12px}
+.btn.sec{background:transparent;color:var(--brand);border:1px solid var(--brand);width:auto;padding:7px 12px;font-size:13px;margin:6px 6px 0 0}
+.btn:disabled{opacity:.5}
+.seg{display:flex;gap:6px}.seg label{flex:1;margin:0;border:1px solid var(--line);border-radius:10px;padding:9px;text-align:center;font-weight:600;cursor:pointer;background:var(--bg)}
+.seg input{display:none}.seg input:checked+span{color:var(--brand)}.seg label:has(input:checked){border-color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,transparent)}
+.preview{border:1px dashed var(--line);border-radius:10px;padding:10px;font-size:13.5px;white-space:pre-wrap;word-break:break-word}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;width:0;background:var(--brand2)}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid currentColor}
+.s-approved,.s-processing{color:var(--warn)}.s-published{color:var(--ok)}.s-failed{color:var(--err)}.s-draft,.s-cancelled{color:var(--mute)}
+.post{display:flex;gap:10px}.post .th{width:64px;height:80px;border-radius:8px;background:var(--line);flex:none;object-fit:cover}
+.post .bd{flex:1;min-width:0}.post .cap{font-size:13px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.msg{padding:10px;border-radius:10px;margin-top:10px;font-weight:600}.msg.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}.msg.err{background:color-mix(in srgb,var(--err) 14%,transparent);color:var(--err)}
+.thumbs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.thumbs img,.thumbs video{width:72px;height:90px;object-fit:cover;border-radius:8px}
+.hidden{display:none}a{color:var(--brand)}
+</style>
+</head>
+<body>
+<header><b>Carnival IG Auto</b><span id="who">—</span></header>
+
+<section id="login" class="hidden"><main>
+  <div class="card">
+    <h3 style="margin-top:0">Access key टाका</h3>
+    <p class="mute">Claude ने दिलेला Carnival access key. एकदा टाकला की हा phone लक्षात ठेवेल.</p>
+    <input id="keyIn" autocomplete="off" placeholder="access key">
+    <button class="btn" onclick="saveKey()">उघडा</button>
+    <div id="loginMsg"></div>
+  </div>
+</main></section>
+
+<section id="app" class="hidden">
+<nav>
+  <button data-t="new" class="on">➕ नवीन Post</button>
+  <button data-t="queue">📋 Queue</button>
+  <button data-t="settings">⚙️ Settings</button>
+</nav>
+<main>
+  <!-- NEW POST -->
+  <div id="t-new">
+    <div class="card" id="tokenWarn" style="display:none"><b>⚠️ Instagram अजून जोडलेलं नाही.</b> <span class="mute">Settings मध्ये token टाका. तोपर्यंत posts queue मध्ये थांबतील.</span></div>
+    <div class="card">
+      <label style="margin-top:0">Post प्रकार</label>
+      <div class="seg">
+        <label><input type="radio" name="mt" value="REELS" checked><span>🎬 Reel</span></label>
+        <label><input type="radio" name="mt" value="IMAGE"><span>🖼️ Photo</span></label>
+        <label><input type="radio" name="mt" value="CAROUSEL"><span>🗂️ Carousel</span></label>
+      </div>
+      <label>File</label>
+      <input type="file" id="file" accept="video/mp4,video/quicktime">
+      <small id="fileHint">Reel: MP4, vertical 9:16, 3 सेकंद–15 मिनिटं, 50 MB पेक्षा कमी.</small>
+      <div class="thumbs" id="thumbs"></div>
+
+      <label>Caption <small id="capCount"></small></label>
+      <textarea id="cap" placeholder="Claude च्या Gmail draft मधून caption इथे paste करा"></textarea>
+      <label>Feed मध्ये दिसणार (पहिली 125 अक्षरं)</label>
+      <div class="preview" id="capPrev">—</div>
+
+      <label>कधी post करायची?</label>
+      <input type="datetime-local" id="when">
+      <small>रिकामं ठेवलं तर पुढच्या 10 मिनिटांत जाईल.</small>
+
+      <button class="btn" id="goBtn" onclick="submitPost()">Schedule करा</button>
+      <div class="bar hidden" id="bar"><i id="barI"></i></div>
+      <div id="newMsg"></div>
+    </div>
+  </div>
+
+  <!-- QUEUE -->
+  <div id="t-queue" class="hidden">
+    <div class="card"><div style="display:flex;justify-content:space-between;align-items:center">
+      <b>Posts</b><span><button class="btn sec" onclick="runNow()">आत्ता चालवा</button><button class="btn sec" onclick="loadStatus()">Refresh</button></span></div>
+      <small id="quota"></small>
+    </div>
+    <div id="posts"></div>
+    <div class="card"><b>QUOTE comments वर दिलेली उत्तरं</b><div id="comments" class="mute">—</div></div>
+    <div class="card"><b>System log</b><div id="logs" class="mute" style="font-size:12px">—</div></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="t-settings" class="hidden">
+    <div class="card">
+      <b>Instagram connection</b>
+      <p id="connState" class="mute">—</p>
+      <label>Instagram access token</label>
+      <input id="tokIn" type="password" autocomplete="off" placeholder="Meta App मधून Generate token केलेला">
+      <small>Token password सारखा आहे. फक्त इथेच paste करा. तो server वर सुरक्षित ठेवला जातो आणि दर 20 दिवसांनी आपोआप renew होतो.</small>
+      <button class="btn" onclick="setToken()">Connect करा</button>
+      <div id="tokMsg"></div>
+    </div>
+    <div class="card">
+      <b>Comment keyword automation</b>
+      <label>Keyword</label><input id="kw">
+      <label>Comment ला public reply</label><textarea id="pr" style="min-height:70px"></textarea>
+      <label>DM मध्ये जाणारा message</label><textarea id="dmt" style="min-height:110px"></textarea>
+      <small>{{WHATSAPP}} च्या जागी आपला WhatsApp number / wa.me link टाका.</small>
+      <button class="btn" onclick="saveSettings()">Save</button>
+      <div id="setMsg"></div>
+    </div>
+    <div class="card"><button class="btn sec" onclick="logout()">या phone वरून logout</button></div>
+  </div>
+</main>
+</section>
+
+<script>
+const API="https://voxjipnlotnmsmydnmxp.supabase.co/functions/v1/carnival-ig";
+let KEY=""; try{KEY=localStorage.getItem("cig_key")||""}catch(e){}
+const $=id=>document.getElementById(id);
+async function call(action,data={}){
+  const r=await fetch(API,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({action,key:KEY,...data})});
+  const j=await r.json().catch(()=>({error:"Server error"}));
+  if(!r.ok||j.error) throw new Error(j.error||("HTTP "+r.status));
+  return j;
+}
+function msg(el,t,ok){$(el).innerHTML=t?`<div class="msg ${ok?"ok":"err"}">${t}</div>`:""}
+async function saveKey(){KEY=$("keyIn").value.trim();try{await call("status");try{localStorage.setItem("cig_key",KEY)}catch(e){}boot()}catch(e){msg("loginMsg",e.message)}}
+function logout(){try{localStorage.removeItem("cig_key")}catch(e){}location.reload()}
+
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));
+  ["new","queue","settings"].forEach(t=>$("t-"+t).classList.toggle("hidden",t!==b.dataset.t));
+  if(b.dataset.t!=="new")loadStatus();
+});
+
+// type switch
+document.querySelectorAll('input[name=mt]').forEach(r=>r.onchange=()=>{
+  const v=mt(); const f=$("file"); f.value=""; $("thumbs").innerHTML="";
+  if(v==="REELS"){f.accept="video/mp4,video/quicktime";f.multiple=false;$("fileHint").textContent="Reel: MP4, vertical 9:16, 3 सेकंद–15 मिनिटं, 50 MB पेक्षा कमी."}
+  if(v==="IMAGE"){f.accept="image/*";f.multiple=false;$("fileHint").textContent="Photo: 4:5 (1080×1350) सर्वोत्तम. आपोआप JPEG मध्ये बदलेल."}
+  if(v==="CAROUSEL"){f.accept="image/*,video/mp4";f.multiple=true;$("fileHint").textContent="Carousel: 2 ते 10 फोटो/व्हिडिओ, निवडलेल्या क्रमाने जातील."}
+});
+const mt=()=>document.querySelector('input[name=mt]:checked').value;
+$("file").onchange=()=>{const t=$("thumbs");t.innerHTML="";[...$("file").files].forEach(f=>{const u=URL.createObjectURL(f);t.insertAdjacentHTML("beforeend",f.type.startsWith("video")?`<video src="${u}" muted></video>`:`<img src="${u}">`)})};
+
+// caption preview
+$("cap").oninput=()=>{const c=$("cap").value;const tags=(c.match(/#/g)||[]).length;
+  $("capCount").textContent=`${c.length}/2200 · hashtags ${tags}/5`+(tags>5?" ⚠️":"");
+  $("capPrev").textContent=c?(c.length>125?c.slice(0,125)+"… more":c):"—"};
+
+// default time: next 7:30 pm
+(function(){const d=new Date();d.setHours(19,30,0,0);if(d<new Date())d.setDate(d.getDate()+1);
+  const p=n=>String(n).padStart(2,"0");$("when").value=`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T19:30`})();
+
+function toJpeg(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const max=1440;let w=img.width,h=img.height;
+  if(w>max){h=Math.round(h*max/w);w=max}const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);
+  c.toBlob(b=>b?res(b):rej(new Error("Image convert झाली नाही")),"image/jpeg",0.9)};img.onerror=()=>rej(new Error("Image वाचता आली नाही"));img.src=URL.createObjectURL(file)})}
+
+function upload(blob,ext,onp){return new Promise(async(res,rej)=>{try{
+  const s=await call("sign_upload",{ext});const x=new XMLHttpRequest();x.open("PUT",s.signedUrl);
+  x.setRequestHeader("content-type",blob.type||"application/octet-stream");x.upload.onprogress=e=>e.lengthComputable&&onp(e.loaded/e.total);
+  x.onload=()=>x.status<300?res(s.publicUrl):rej(new Error("Upload अयशस्वी ("+x.status+") "+x.responseText.slice(0,120)));x.onerror=()=>rej(new Error("Network error"));x.send(blob)}catch(e){rej(e)}})}
+
+async function submitPost(){
+  msg("newMsg","");const files=[...$("file").files];const type=mt();
+  if(!files.length)return msg("newMsg","File निवडा");
+  if(type==="CAROUSEL"&&(files.length<2||files.length>10))return msg("newMsg","Carousel ला 2–10 files लागतात");
+  if(((($("cap").value).match(/#/g))||[]).length>5)return msg("newMsg","जास्तीत जास्त 5 hashtags");
+  for(const f of files){if(f.type.startsWith("video")&&f.size>50*1024*1024)return msg("newMsg",`${f.name} 50 MB पेक्षा मोठी आहे. Export करताना size कमी करा.`)}
+  $("goBtn").disabled=true;$("bar").classList.remove("hidden");
+  try{const urls=[];
+    for(let i=0;i<files.length;i++){const f=files[i];let blob=f,ext="mp4";
+      if(f.type.startsWith("image")){blob=await toJpeg(f);ext="jpg"}else ext=f.name.toLowerCase().endsWith(".mov")?"mov":"mp4";
+      urls.push(await upload(blob,ext,p=>$("barI").style.width=((i+p)/files.length*100)+"%"))}
+    const w=$("when").value;const r=await call("create_post",{media_type:type,media_urls:urls,caption:$("cap").value,scheduled_at:w?new Date(w).toISOString():new Date().toISOString()});
+    msg("newMsg",`✅ Schedule झाली. ${w?new Date(w).toLocaleString("en-IN"):"लवकरच"} ला Instagram वर जाईल.`,true);
+    $("file").value="";$("thumbs").innerHTML="";$("cap").value="";$("cap").oninput();
+  }catch(e){msg("newMsg",e.message)}finally{$("goBtn").disabled=false;setTimeout(()=>{$("bar").classList.add("hidden");$("barI").style.width="0"},1500)}
+}
+
+const ST={draft:"Approval बाकी",approved:"Scheduled",processing:"Instagram वर upload चालू",published:"Posted ✓",failed:"Failed",cancelled:"Cancelled"};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+async function loadStatus(){try{const s=await call("status");render(s)}catch(e){$("posts").innerHTML=`<div class="msg err">${esc(e.message)}</div>`}}
+function render(s){
+  $("who").textContent=s.username?"@"+s.username:"Instagram जोडलेलं नाही";
+  $("tokenWarn").style.display=s.tokenSet?"none":"block";
+  $("connState").innerHTML=s.tokenSet?`✅ जोडलेलं: <b>@${esc(s.username)}</b> · token set ${new Date(s.tokenSetAt).toLocaleDateString("en-IN")}`:"❌ अजून जोडलेलं नाही";
+  $("quota").textContent=s.limit?`आज API ने ${s.limit.quota_usage} posts झाल्या (limit ${s.limit.config?.quota_total??"—"} / 24 तास)`:"";
+  const ps=(s.posts||[]).filter(p=>p.status!=="cancelled"||1);
+  $("posts").innerHTML=ps.length?ps.map(p=>{const u=p.media_urls[0];const isV=/\.(mp4|mov)$/i.test(u);
+    return `<div class="card post">${isV?`<video class="th" src="${esc(u)}" muted></video>`:`<img class="th" src="${esc(u)}">`}
+    <div class="bd"><span class="pill s-${p.status}">${ST[p.status]||p.status}</span> <small>${p.media_type} · ${new Date(p.scheduled_at).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short"})}</small>
+    <div class="cap">${esc(p.caption)||"<i class=mute>caption नाही</i>"}</div>
+    ${p.permalink?`<a href="${esc(p.permalink)}" target="_blank">Instagram वर पाहा ↗</a>`:""}
+    ${p.error?`<div class="mute" style="color:var(--err)">${esc(p.error).slice(0,200)}</div>`:""}
+    ${["draft","approved","failed"].includes(p.status)?`<button class="btn sec" onclick="act('retry_now','${p.id}')">आत्ता post करा</button><button class="btn sec" onclick="act('cancel','${p.id}')">रद्द करा</button>`:""}
+    </div></div>`}).join(""):`<div class="card mute">अजून एकही post नाही.</div>`;
+  $("comments").innerHTML=(s.comments||[]).map(c=>`<div>@${esc(c.username)}: “${esc(c.text)}” → <b>${esc(c.action)}</b></div>`).join("")||"—";
+  $("logs").innerHTML=(s.logs||[]).map(l=>`<div style="color:${l.level==="error"?"var(--err)":"inherit"}">${new Date(l.at).toLocaleString("en-IN")} · ${esc(l.msg)}</div>`).join("")||"—";
+  if(s.settings&&document.activeElement.tagName!=="TEXTAREA"&&document.activeElement.id!=="kw"){$("kw").value=s.settings.keyword||"";$("pr").value=s.settings.public_reply||"";$("dmt").value=s.settings.dm_text||""}
+}
+async function act(a,id){try{await call(a,{id});loadStatus()}catch(e){alertBox(e.message)}}
+async function runNow(){try{const r=await call("run_now");loadStatus()}catch(e){$("quota").textContent="⚠️ "+e.message}}
+function alertBox(t){$("quota").textContent="⚠️ "+t}
+async function setToken(){msg("tokMsg","");try{const r=await call("set_token",{token:$("tokIn").value});$("tokIn").value="";msg("tokMsg",`✅ जोडलं: @${esc(r.username)} (${esc(r.account_type||"")})`,true);loadStatus()}catch(e){msg("tokMsg",e.message)}}
+async function saveSettings(){try{await call("save_settings",{keyword:$("kw").value.trim(),public_reply:$("pr").value,dm_text:$("dmt").value});msg("setMsg","✅ Save झालं",true)}catch(e){msg("setMsg",e.message)}}
+
+function boot(){if(!KEY){$("login").classList.remove("hidden");$("app").classList.add("hidden");return}
+  $("login").classList.add("hidden");$("app").classList.remove("hidden");$("cap").oninput();loadStatus()}
+boot();
+</script>
+</body>
+</html>

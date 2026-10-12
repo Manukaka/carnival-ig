@@ -1,0 +1,153 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Cinzel;src:url(../node_modules/@fontsource/cinzel/files/cinzel-latin-500-normal.woff2)}
+@font-face{font-family:Cinzel;font-weight:700;src:url(../node_modules/@fontsource/cinzel/files/cinzel-latin-700-normal.woff2)}
+@font-face{font-family:Mont;font-weight:400;src:url(../node_modules/@fontsource/montserrat/files/montserrat-latin-400-normal.woff2)}
+@font-face{font-family:Mont;font-weight:600;src:url(../node_modules/@fontsource/montserrat/files/montserrat-latin-600-normal.woff2)}
+:root{--tan:#B89C79;--cream:#F6F0E7;--brown:#5E4B38;--esp:#221B15;--gold:#C9A46A}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--esp)}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--cream)}
+.abs{position:absolute}
+.serif{font-family:Cinzel;color:var(--brown)}
+.sans{font-family:Mont;color:var(--brown)}
+.grid{inset:0;background-image:linear-gradient(rgba(94,75,56,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(94,75,56,.07) 1px,transparent 1px);background-size:54px 54px}
+.panel{background:var(--tan)}
+.mask{overflow:hidden}
+.line{display:block}
+svg .draw{fill:none;stroke:var(--brown);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+svg .thin{stroke-width:2;stroke:var(--gold)}
+.counter{font-family:Cinzel;font-weight:700;font-size:150px;color:var(--brown);line-height:1}
+.clabel{font-family:Mont;font-weight:600;font-size:34px;letter-spacing:6px;color:var(--tan);text-transform:uppercase}
+.kicker{font-family:Mont;font-weight:600;font-size:30px;letter-spacing:10px;color:var(--tan);text-transform:uppercase}
+</style></head>
+<body><div id="stage">
+  <div class="abs grid" id="grid"></div>
+
+  <!-- S1 logo reveal -->
+  <div class="abs panel" id="tanPanel" style="left:0;top:0;width:1080px;height:1920px;transform-origin:50% 50%"></div>
+  <img class="abs" id="mono" src="../assets/mono_white.png" style="width:520px;left:280px;top:560px">
+  <div class="abs serif" id="word" style="width:1080px;top:1230px;text-align:center;font-size:118px;letter-spacing:14px;color:var(--cream)">CARNIVAL</div>
+  <div class="abs sans" id="tag" style="width:1080px;top:1385px;text-align:center;font-size:30px;letter-spacing:12px;color:var(--cream);font-weight:600">DESIGN YOUR HERITAGE</div>
+
+  <!-- S2 interiors -->
+  <div class="abs" id="s2" style="inset:0;opacity:0">
+    <div class="abs kicker" style="left:90px;top:250px" id="k2">01 — Interiors</div>
+    <div class="abs mask" style="left:86px;top:310px"><div class="serif line" id="t2a" style="font-size:132px;font-weight:700">Interiors</div></div>
+    <div class="abs mask" style="left:86px;top:460px"><div class="serif line" id="t2b" style="font-size:92px;color:var(--tan)">that fit.</div></div>
+    <svg class="abs" id="kitchen" style="left:140px;top:790px" width="800" height="729" viewBox="0 0 900 820">
+      <path class="draw" d="M20 40 H880 V300 H20 Z"/>
+      <path class="draw" d="M235 40 V300 M450 40 V300 M665 40 V300"/>
+      <path class="draw" d="M20 420 H880 V780 H20 Z"/>
+      <path class="draw" d="M20 470 H880"/>
+      <path class="draw" d="M235 470 V780 M450 470 V780 M665 470 V780"/>
+      <path class="draw" d="M450 595 H665 M450 690 H665"/>
+      <path class="draw thin" d="M200 150 V200 M270 150 V200 M630 150 V200 M700 150 V200"/>
+      <path class="draw thin" d="M520 545 H595 M520 640 H595 M520 735 H595 M110 560 V650 M345 560 V650 M770 560 V650"/>
+      
+      <path class="draw thin" d="M20 810 H880 M20 800 V820 M880 800 V820"/>
+    </svg>
+    <div class="abs sans" id="cap2" style="left:90px;top:620px;font-size:38px;font-weight:600;line-height:1.5">Modular kitchens · Wardrobes<br>Cafés · Offices — turnkey</div>
+  </div>
+
+  <!-- S3 fabrication -->
+  <div class="abs" id="s3" style="inset:0;opacity:0;background:var(--esp)">
+    <div class="abs kicker" style="left:90px;top:250px;color:var(--gold)" id="k3">02 — Fabrication</div>
+    <div class="abs mask" style="left:86px;top:310px"><div class="serif line" id="t3a" style="font-size:118px;font-weight:700;color:var(--cream)">Fabrication</div></div>
+    <div class="abs mask" style="left:86px;top:450px"><div class="serif line" id="t3b" style="font-size:92px;color:var(--gold)">that lasts.</div></div>
+    <svg class="abs" id="mezz" style="left:120px;top:780px" width="840" height="752" viewBox="0 0 960 860">
+      <g style="--c:#F6F0E7">
+      <path class="draw" style="stroke:#F6F0E7" d="M120 760 V330 M480 840 V410 M840 760 V330 M480 600 V250"/>
+      <path class="draw" style="stroke:#F6F0E7" d="M120 330 L480 410 L840 330 L480 250 Z"/>
+      <path class="draw" style="stroke:#F6F0E7" d="M120 360 L480 440 L840 360"/>
+      <path class="draw thin" d="M210 350 L570 270 M300 370 L660 290 M390 390 L750 310 M570 390 L210 310 M660 370 L300 290"/>
+      <path class="draw thin" d="M600 560 L760 470 M620 600 L780 510 M640 640 L800 550 M660 680 L820 590 M680 720 L840 630"/>
+      <path class="draw" style="stroke:#C9A46A" d="M590 540 L590 700 M840 400 L840 560"/>
+      <path class="draw thin" d="M60 780 L480 860 L900 780"/>
+      </g>
+    </svg>
+    <div class="abs sans" id="cap3" style="left:90px;top:610px;font-size:38px;font-weight:600;line-height:1.5;color:var(--cream)">Mezzanines · Racks · Trolleys<br>MS · SS · Aluminium</div>
+  </div>
+
+  <!-- S4 numbers -->
+  <div class="abs" id="s4" style="inset:0;opacity:0;background:var(--cream)">
+    <div class="abs kicker" style="left:90px;top:240px">Since 2018</div>
+    <div class="abs" id="c1" style="left:90px;top:340px"><div class="counter"><span id="n1">0</span>+</div><div class="clabel">projects delivered</div></div>
+    <div class="abs" id="c2" style="left:90px;top:660px"><div class="counter"><span id="n2">0</span></div><div class="clabel">sq.ft own workshop</div></div>
+    <div class="abs" id="c3" style="left:90px;top:980px"><div class="counter"><span id="n3">0</span>–<span id="n3b">0</span></div><div class="clabel">projects in parallel</div></div>
+    <div class="abs" id="bar4" style="left:90px;top:1300px;width:0;height:6px;background:var(--tan)"></div>
+    <div class="abs sans" id="loc" style="left:90px;top:1335px;font-size:34px;font-weight:600">Talegaon Dhamdhere · Pune</div>
+  </div>
+
+  <!-- S5 outro -->
+  <div class="abs panel" id="s5" style="inset:0;opacity:0">
+    <img class="abs" id="mono2" src="../assets/mono_white.png" style="width:300px;left:390px;top:430px">
+    <div class="abs serif" style="width:1080px;top:830px;text-align:center;font-size:96px;letter-spacing:12px;color:var(--cream)">CARNIVAL</div>
+    <div class="abs sans" style="width:1080px;top:960px;text-align:center;font-size:28px;letter-spacing:12px;color:var(--cream);font-weight:600">INTERIORS · FABRICATION</div>
+    <div class="abs" id="cta" style="left:140px;top:1120px;width:800px;padding:38px 0;background:var(--cream);text-align:center;border-radius:6px">
+      <div class="serif" style="font-size:52px;font-weight:700">Comment “QUOTE”</div>
+      <div class="sans" style="font-size:32px;font-weight:600;margin-top:10px;color:var(--tan)">for a free site visit</div>
+    </div>
+    <div class="abs sans" id="wa" style="width:1080px;top:1340px;text-align:center;font-size:34px;font-weight:600;color:var(--cream)">WhatsApp 95277 10036</div>
+  </div>
+</div>
+
+<script src="../node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+const B=2.4; // one bar at 100 bpm
+const tl=gsap.timeline({paused:true});
+function prep(svg){svg.querySelectorAll('.draw').forEach(p=>{const L=p.getTotalLength();p.style.strokeDasharray=L;p.style.strokeDashoffset=L})}
+prep(kitchen);prep(mezz);
+
+// S1 0–2.4: tan panel shrinks from full to band, monogram rises, wordmark tracks in
+gsap.set(mono,{opacity:0,scale:.82,y:40});gsap.set([word,tag],{opacity:0});gsap.set(word,{letterSpacing:'60px'});
+tl.to(mono,{opacity:1,scale:1,y:0,duration:1.0,ease:'power3.out'},0.15)
+  .to(word,{opacity:1,letterSpacing:'14px',duration:1.1,ease:'power3.out'},0.55)
+  .to(tag,{opacity:1,duration:.6},1.2)
+  .to([mono,word,tag],{opacity:0,y:-60,duration:.35,ease:'power2.in'},B-0.35)
+  .to(tanPanel,{scaleY:0,transformOrigin:'50% 0%',duration:.45,ease:'power3.inOut'},B-0.3);
+
+// S2 2.4–7.2
+gsap.set([t2a,t2b],{yPercent:110});gsap.set([k2,cap2],{opacity:0,y:20});
+tl.set(s2,{opacity:1},B)
+  .to(k2,{opacity:1,y:0,duration:.4},B+0.05)
+  .to(t2a,{yPercent:0,duration:.7,ease:'power4.out'},B+0.1)
+  .to(t2b,{yPercent:0,duration:.7,ease:'power4.out'},B+0.35)
+  .to(kitchen.querySelectorAll('.draw'),{strokeDashoffset:0,duration:1.6,ease:'power2.inOut',stagger:.12},B+0.6)
+  .to(cap2,{opacity:1,y:0,duration:.5},B+2.2)
+  .to(s2,{xPercent:-100,duration:.45,ease:'power3.in'},3*B-0.4);
+
+// S3 7.2–12.0
+gsap.set(s3,{xPercent:100});gsap.set([t3a,t3b],{yPercent:110});gsap.set([k3,cap3],{opacity:0,y:20});
+tl.to(s3,{opacity:1,xPercent:0,duration:.45,ease:'power3.out'},3*B-0.4)
+  .to(k3,{opacity:1,y:0,duration:.4},3*B+0.05)
+  .to(t3a,{yPercent:0,duration:.7,ease:'power4.out'},3*B+0.1)
+  .to(t3b,{yPercent:0,duration:.7,ease:'power4.out'},3*B+0.35)
+  .to(mezz.querySelectorAll('.draw'),{strokeDashoffset:0,duration:1.5,ease:'power2.inOut',stagger:.14},3*B+0.6)
+  .to(cap3,{opacity:1,y:0,duration:.5},3*B+2.2)
+  .to(s3,{yPercent:-100,duration:.45,ease:'power3.in'},5*B-0.4);
+
+// S4 12.0–14.4 counters
+const cnt={a:0,b:0,c:0};
+gsap.set([c1,c2,c3,loc],{opacity:0,x:-40});
+tl.to(s4,{opacity:1,duration:.3},5*B-0.4)
+  .to(c1,{opacity:1,x:0,duration:.4},5*B-0.1)
+  .to(c2,{opacity:1,x:0,duration:.4},5*B+0.15)
+  .to(c3,{opacity:1,x:0,duration:.4},5*B+0.4)
+  .to(cnt,{a:110,b:5000,c:4,duration:1.3,ease:'power2.out',onUpdate:()=>{n1.textContent=Math.round(cnt.a);n2.textContent=Math.round(cnt.b).toLocaleString('en-IN');n3.textContent=Math.round(cnt.c);n3b.textContent=Math.round(cnt.c*1.25)}},5*B)
+  .to(bar4,{width:900,duration:.8,ease:'power3.out'},5*B+0.9)
+  .to(loc,{opacity:1,x:0,duration:.4},5*B+1.2);
+
+// S5 14.4–16.8 outro
+gsap.set(mono2,{opacity:0,scale:.7});gsap.set([cta,wa],{opacity:0,y:30});
+tl.to(s5,{opacity:1,duration:.35},6*B-0.2)
+  .to(mono2,{opacity:1,scale:1,duration:.7,ease:'back.out(1.6)'},6*B)
+  .to(cta,{opacity:1,y:0,duration:.5,ease:'power3.out'},6*B+0.4)
+  .to(wa,{opacity:1,y:0,duration:.4},6*B+0.7)
+  .to(cta,{scale:1.04,duration:.3,yoyo:true,repeat:1,ease:'sine.inOut'},6*B+1.3);
+
+window.DURATION=7*B;
+window.seek=t=>{tl.seek(t,false)};
+window.ready=document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.decode().catch(()=>{}))));
+</script></body></html>

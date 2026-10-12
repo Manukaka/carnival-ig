@@ -14,7 +14,14 @@ Brand rules (never break):
 - Never name clients (e.g. Jabil) or show client logos. Never invent numbers. Approved proof: since 2018, 110+ projects, 5,000 sq.ft own workshop at Talegaon Dhamdhere, 4–5 projects in parallel, 8,000 sq.ft café turnkey in 90 days.
 - CTA: Comment "QUOTE" for a free site visit · WhatsApp 95277 10036.
 
-How to make a reel:
+Preferred engine (spec-driven, no HTML editing): write reel-studio/specs/<date>-<slug>.json and run
+  node render.mjs specs/<file>.json out/<slug>.mp4 30 auto <warm|bright|dark|festive>
+Scene types: logo, headline, drawing, versus, mythfact, checklist, counters, media (real clip/photo URL), beforeafter, quote, cta.
+Art: kitchen, wardrobe, mezzanine, rack, trolley, ceiling, door, office, washroom. Backgrounds: cream | espresso | tan.
+Carousels: specs/<x>.json {slides:[cover, point…, mythfact, cta]} → node render-carousel.mjs specs/<x>.json out/<dir>
+Example specs: reel-studio/specs/demo-laminate-vs-veneer.json, demo-carousel.json.
+
+Legacy (hand-made template) method:
 1. Pick the hook (3 options, score them) and a 5-scene structure on bar boundaries (100 bpm → 2.4 s per bar): hook → problem/stake → 1–2 proof/teach scenes → CTA + logo.
 2. Copy reel-studio/templates/brand-intro.html to a new template; change copy, SVG line drawings (stroke-draw animations), counters, transitions. Motion must change every beat: masks, line draws, counters, slides — never a static image with music.
 3. If real site/workshop footage exists, use it as <video> layers inside the template (muted, seeked per frame) — real footage beats graphics.

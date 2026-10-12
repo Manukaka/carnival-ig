@@ -14,7 +14,11 @@ def add(start,sig,pan=0.0,g=1.0):
 def tone(fr,d,dec=3.0,att=0.005,harm=(1,.5,.25)):
     u=np.arange(int(sr*d))/sr; env=np.minimum(1,u/att)*np.exp(-u*dec)
     return env*sum(a*np.sin(2*np.pi*fr*(k+1)*u) for k,a in enumerate(harm))
-prog=[[45,57,60,64],[41,53,57,60],[48,55,60,64],[43,55,59,62]]  # Am F C G (bass + triad)
+MOODS={'warm':[[45,57,60,64],[41,53,57,60],[48,55,60,64],[43,55,59,62]],   # Am F C G
+       'bright':[[48,55,60,64],[43,55,59,62],[45,57,60,64],[41,53,57,60]], # C G Am F
+       'dark':[[38,50,53,57],[46,50,53,58],[41,53,57,60],[48,52,55,60]],   # Dm Bb F C
+       'festive':[[50,54,57,62],[45,52,57,61],[47,54,59,62],[43,55,59,62]]} # D A Bm G
+prog=MOODS.get(opts.get('mood','warm'),MOODS['warm'])
 nb=int(dur/bar)+1
 for b in range(nb):
     s=b*bar; ch=prog[b%4]

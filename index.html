@@ -13,7 +13,7 @@
 header{background:var(--brand);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
 header b{font-size:17px;letter-spacing:.3px}header span{font-size:12px;opacity:.85}
 nav{display:flex;gap:6px;padding:10px 16px;position:sticky;top:0;background:var(--bg);z-index:2;border-bottom:1px solid var(--line)}
-nav button{flex:1;padding:9px 4px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font-weight:600}
+nav{overflow-x:auto}nav button{flex:1;min-width:84px;padding:9px 4px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font-weight:600}
 nav button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
 main{max-width:640px;margin:0 auto;padding:14px 16px 60px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
@@ -52,6 +52,8 @@ textarea{min-height:150px;resize:vertical}
 <section id="app" class="hidden">
 <nav>
   <button data-t="new" class="on">➕ नवीन Post</button>
+  <button data-t="clips">🎥 Clips</button>
+  <button data-t="leads">👥 Leads</button>
   <button data-t="queue">📋 Queue</button>
   <button data-t="settings">⚙️ Settings</button>
 </nav>
@@ -84,6 +86,38 @@ textarea{min-height:150px;resize:vertical}
       <div class="bar hidden" id="bar"><i id="barI"></i></div>
       <div id="newMsg"></div>
     </div>
+  </div>
+
+  <!-- CLIPS -->
+  <div id="t-clips" class="hidden">
+    <div class="card">
+      <b>Site / workshop clips</b>
+      <p class="mute">Supervisors इथे रोज 5–10 vertical clips किंवा फोटो टाकतील. Agent हे खऱ्या कामाच्या reels मध्ये वापरेल.</p>
+      <label>Files</label><input type="file" id="clipFiles" accept="video/*,image/*" multiple>
+      <label>Site / project नाव</label><input id="clipSite" placeholder="उदा. Wakad 2BHK kitchen">
+      <label>Stage</label>
+      <select id="clipStage"><option value="before">Before (काम सुरू होण्याआधी)</option><option value="during" selected>During (काम चालू)</option><option value="after">After (handover)</option><option value="workshop">Workshop</option><option value="other">Other</option></select>
+      <label>Note (ऐच्छिक)</label><input id="clipNote" placeholder="उदा. edge banding machine, 18mm BWP">
+      <button class="btn" id="clipBtn" onclick="uploadClips()">Upload करा</button>
+      <div class="bar hidden" id="cbar"><i id="cbarI"></i></div>
+      <div id="clipMsg"></div>
+      <small>Client चे logos, चेहरे किंवा confidential मशीन दिसू नयेत. Vertical (उभा) video, 10–30 सेकंद, 50 MB पेक्षा कमी.</small>
+    </div>
+    <div class="card"><b>न वापरलेले clips</b> <small id="clipCount"></small><div class="thumbs" id="clipList"></div></div>
+  </div>
+
+  <!-- LEADS -->
+  <div id="t-leads" class="hidden">
+    <div class="card">
+      <b>नवीन lead जोडा</b>
+      <label>नाव</label><input id="lName">
+      <label>Phone</label><input id="lPhone" inputmode="tel">
+      <label>काम / requirement</label><input id="lReq" placeholder="उदा. 2BHK modular kitchen, mezzanine 1200 sq.ft">
+      <label>Location</label><input id="lLoc">
+      <label>Source</label><select id="lSrc"><option value="instagram_dm">Instagram DM</option><option value="instagram_comment">Instagram comment</option><option value="whatsapp">WhatsApp</option><option value="call">Call</option><option value="referral">Referral</option></select>
+      <button class="btn" onclick="addLead()">Save</button><div id="leadMsg"></div>
+    </div>
+    <div id="leadList"></div>
   </div>
 
   <!-- QUEUE -->
@@ -138,8 +172,10 @@ function logout(){try{localStorage.removeItem("cig_key")}catch(e){}location.relo
 
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));
-  ["new","queue","settings"].forEach(t=>$("t-"+t).classList.toggle("hidden",t!==b.dataset.t));
-  if(b.dataset.t!=="new")loadStatus();
+  ["new","clips","leads","queue","settings"].forEach(t=>$("t-"+t).classList.toggle("hidden",t!==b.dataset.t));
+  if(b.dataset.t==="queue"||b.dataset.t==="settings")loadStatus();
+  if(b.dataset.t==="clips")loadClips();
+  if(b.dataset.t==="leads")loadLeads();
 });
 
 // type switch
@@ -213,6 +249,27 @@ async function runNow(){try{const r=await call("run_now");loadStatus()}catch(e){
 function alertBox(t){$("quota").textContent="⚠️ "+t}
 async function setToken(){msg("tokMsg","");try{const r=await call("set_token",{token:$("tokIn").value});$("tokIn").value="";msg("tokMsg",`✅ जोडलं: @${esc(r.username)} (${esc(r.account_type||"")})`,true);loadStatus()}catch(e){msg("tokMsg",e.message)}}
 async function saveSettings(){try{await call("save_settings",{keyword:$("kw").value.trim(),public_reply:$("pr").value,dm_text:$("dmt").value});msg("setMsg","✅ Save झालं",true)}catch(e){msg("setMsg",e.message)}}
+
+async function uploadClips(){
+  msg("clipMsg","");const files=[...$("clipFiles").files];if(!files.length)return msg("clipMsg","File निवडा");
+  $("clipBtn").disabled=true;$("cbar").classList.remove("hidden");let done=0;
+  try{for(let i=0;i<files.length;i++){const f=files[i];let blob=f,ext,kind;
+      if(f.type.startsWith("image")){blob=await toJpeg(f);ext="jpg";kind="image"}else{if(f.size>50*1024*1024){msg("clipMsg",f.name+" 50 MB पेक्षा मोठी, सोडली");continue}ext=f.name.toLowerCase().endsWith(".mov")?"mov":"mp4";kind="video"}
+      const u=await upload(blob,ext,p=>$("cbarI").style.width=((i+p)/files.length*100)+"%");
+      await call("register_footage",{url:u,kind,site:$("clipSite").value,stage:$("clipStage").value,note:$("clipNote").value});done++}
+    msg("clipMsg",`✅ ${done} clips upload झाल्या. Agent पुढच्या reels मध्ये वापरेल.`,true);$("clipFiles").value="";loadClips();
+  }catch(e){msg("clipMsg",e.message)}finally{$("clipBtn").disabled=false;setTimeout(()=>{$("cbar").classList.add("hidden");$("cbarI").style.width="0"},1500)}
+}
+async function loadClips(){try{const r=await call("list_footage",{unused_only:true});$("clipCount").textContent=`(${r.footage.length})`;
+  $("clipList").innerHTML=r.footage.map(f=>f.kind==="video"?`<video src="${esc(f.url)}" muted title="${esc(f.site||"")}"></video>`:`<img src="${esc(f.url)}" title="${esc(f.site||"")}">`).join("")||'<span class="mute">अजून clips नाहीत</span>'}catch(e){$("clipList").textContent=e.message}}
+const LS={new:"नवीन",contacted:"बोललो",site_visit:"Site visit",quoted:"Quote दिलं",won:"Order ✓",lost:"गेला"};
+async function loadLeads(){try{const r=await call("list_leads");
+  $("leadList").innerHTML=(r.leads||[]).map(l=>`<div class="card"><b>${esc(l.name||l.ig_username||"—")}</b> ${l.phone?`· <a href="tel:${esc(l.phone)}">${esc(l.phone)}</a>`:""} <small>${esc(l.source)} · ${new Date(l.created_at).toLocaleDateString("en-IN")}</small>
+    <div class="mute">${esc(l.requirement||"")} ${l.location?"· "+esc(l.location):""}</div>
+    <select onchange="act2('${l.id}',this.value)" style="margin-top:8px">${Object.entries(LS).map(([k,v])=>`<option value="${k}" ${k===l.status?"selected":""}>${v}</option>`).join("")}</select></div>`).join("")||'<div class="card mute">अजून leads नाहीत.</div>'}catch(e){$("leadList").textContent=e.message}}
+async function act2(id,status){try{await call("update_lead",{id,status})}catch(e){alert(e.message)}}
+async function addLead(){try{await call("add_lead",{name:$("lName").value,phone:$("lPhone").value,requirement:$("lReq").value,location:$("lLoc").value,source:$("lSrc").value});
+  ["lName","lPhone","lReq","lLoc"].forEach(i=>$(i).value="");msg("leadMsg","✅ Save झालं",true);loadLeads()}catch(e){msg("leadMsg",e.message)}}
 
 function boot(){if(!KEY){$("login").classList.remove("hidden");$("app").classList.add("hidden");return}
   $("login").classList.add("hidden");$("app").classList.remove("hidden");$("cap").oninput();loadStatus()}

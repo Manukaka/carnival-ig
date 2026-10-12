@@ -1,0 +1,50 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Cinzel;font-weight:500;src:url(../node_modules/@fontsource/cinzel/files/cinzel-latin-500-normal.woff2)}
+@font-face{font-family:Cinzel;font-weight:700;src:url(../node_modules/@fontsource/cinzel/files/cinzel-latin-700-normal.woff2)}
+@font-face{font-family:Mont;font-weight:600;src:url(../node_modules/@fontsource/montserrat/files/montserrat-latin-600-normal.woff2)}
+@font-face{font-family:Mont;font-weight:800;src:url(../node_modules/@fontsource/montserrat/files/montserrat-latin-800-normal.woff2)}
+:root{--tan:#B89C79;--cream:#F6F0E7;--brown:#5E4B38;--esp:#221B15;--gold:#C9A46A}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1350px;overflow:hidden}
+.slide{position:absolute;inset:0;display:none;overflow:hidden;background:var(--bg);color:var(--ink);padding:110px 90px}
+.t-cream{--bg:var(--cream);--ink:var(--brown);--acc:var(--tan);--soft:rgba(94,75,56,.08)}
+.t-espresso{--bg:var(--esp);--ink:var(--cream);--acc:var(--gold);--soft:rgba(246,240,231,.06)}
+.t-tan{--bg:var(--tan);--ink:var(--cream);--acc:var(--esp);--soft:rgba(255,255,255,.12)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(var(--soft) 1px,transparent 1px),linear-gradient(90deg,var(--soft) 1px,transparent 1px);background-size:54px 54px}
+.rel{position:relative}
+.serif{font-family:Cinzel;font-weight:700;line-height:1.08}
+.sans{font-family:Mont;font-weight:600;line-height:1.45}
+.kicker{font-family:Mont;font-weight:600;font-size:28px;letter-spacing:10px;text-transform:uppercase;color:var(--acc)}
+.mark{background:var(--ink);-webkit-mask:url(../assets/mono_white.png) center/contain no-repeat;mask:url(../assets/mono_white.png) center/contain no-repeat}
+.foot{position:absolute;left:90px;right:90px;bottom:70px;display:flex;justify-content:space-between;align-items:center;font-family:Mont;font-weight:600;font-size:24px;letter-spacing:6px;color:var(--acc)}
+.num{font-family:Cinzel;font-weight:700;font-size:220px;color:var(--acc);line-height:.9;opacity:.9}
+svg .d{fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+svg .t{fill:none;stroke:var(--acc);stroke-width:2.5;stroke-linecap:round}
+.chip{display:inline-block;font-family:Mont;font-weight:800;font-size:26px;letter-spacing:6px;padding:10px 22px;border-radius:40px;background:var(--acc);color:var(--bg)}
+</style></head><body>
+<script src="art.js"></script>
+<script>
+const SPEC = window.SPEC || {slides:[{type:'cover',title:'Title'},{type:'cta'}]};
+const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const th = ['cream','espresso','tan'];
+const N = SPEC.slides.length;
+function artSvg(name, w){ const a = ART[name] || ART.kitchen; return `<svg width="${w}" height="${w*820/900}" viewBox="0 0 900 820">${a.d.map(d=>`<path class="d" d="${d}"/>`).join('')}${a.t.map(d=>`<path class="t" d="${d}"/>`).join('')}</svg>`; }
+SPEC.slides.forEach((s, i) => {
+  const d = document.createElement('div'); d.className = 'slide t-' + (s.bg || (s.type === 'cover' ? 'espresso' : s.type === 'cta' ? 'tan' : th[i % 2 ? 0 : 0]));
+  let h = '<div class="grid"></div><div class="rel">';
+  if (s.type === 'cover') h += `<div class="kicker">${esc(s.kicker || 'Carnival guide')}</div><div class="serif" style="font-size:${s.size||104}px;margin-top:40px">${esc(s.title)}</div>${s.sub?`<div class="sans" style="font-size:40px;margin-top:40px;color:var(--acc)">${esc(s.sub)}</div>`:''}${s.art?`<div style="margin-top:60px">${artSvg(s.art, 640)}</div>`:''}`;
+  if (s.type === 'point') h += `<div class="num">${esc(s.n ?? i)}</div><div class="serif" style="font-size:${s.size||76}px;margin-top:30px">${esc(s.title)}</div><div class="sans" style="font-size:40px;margin-top:36px">${esc(s.body || '')}</div>${s.art?`<div style="margin-top:50px">${artSvg(s.art, 520)}</div>`:''}`;
+  if (s.type === 'mythfact') h += `<span class="chip" style="background:var(--ink)">MYTH</span><div class="serif" style="font-size:64px;margin-top:24px;text-decoration:line-through;text-decoration-color:#B3261E;opacity:.6">${esc(s.myth)}</div><div style="margin-top:70px"><span class="chip">FACT</span><div class="serif" style="font-size:64px;margin-top:24px">${esc(s.fact)}</div></div>`;
+  if (s.type === 'cta') h += `<div class="mark" style="--ink:var(--cream);width:220px;height:240px;margin:60px auto 0"></div><div class="serif" style="text-align:center;font-weight:500;font-size:84px;letter-spacing:10px;margin-top:40px;color:var(--cream)">CARNIVAL</div><div class="sans" style="text-align:center;font-size:26px;letter-spacing:10px;color:var(--cream)">INTERIORS · FABRICATION · PUNE</div><div style="margin:70px auto 0;width:820px;background:var(--cream);border-radius:8px;padding:40px;text-align:center"><div class="serif" style="font-size:54px;color:var(--brown)">${esc(s.line1 || 'Comment “QUOTE”')}</div><div class="sans" style="font-size:32px;color:var(--tan)">${esc(s.line2 || 'for a free site visit')}</div></div><div class="sans" style="text-align:center;font-size:34px;margin-top:40px;color:var(--cream)">${esc(s.line3 || 'WhatsApp 95277 10036 · Save this post')}</div>`;
+  h += '</div>';
+  if (s.type === 'cover') h += `<div class="sans" style="position:absolute;right:90px;bottom:130px;font-size:30px;letter-spacing:6px;color:var(--acc)">SWIPE →</div>`;
+  if (s.type === 'point' && !s.art) h += `<div class="mark" style="position:absolute;right:-60px;bottom:-40px;width:520px;height:560px;opacity:.10"></div>`;
+  if (s.type !== 'cta') h += `<div class="foot"><span>CARNIVAL ENTERPRISES</span><span>${i+1} / ${N}</span></div>`;
+  d.innerHTML = h; document.body.appendChild(d);
+});
+window.COUNT = N;
+window.show = i => { document.querySelectorAll('.slide').forEach((s, k) => s.style.display = k === i ? 'block' : 'none'); };
+window.ready = Promise.all(['500 50px Cinzel','700 50px Cinzel','600 20px Mont','800 20px Mont'].map(f => document.fonts.load(f))).then(() => document.fonts.ready);
+</script></body></html>

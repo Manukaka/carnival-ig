@@ -1,0 +1,16 @@
+{
+  "bpm": 100,
+  "themeOffset": 0,
+  "scenes": [
+    {"type": "headline", "bars": 1, "kicker": "Material guide", "lines": ["Laminate", "or veneer?"], "accent": 1, "sub": "Every client asks this. Straight answer in 20 seconds."},
+    {"type": "versus", "bars": 2, "title": "Laminate vs Veneer", "bg": "espresso",
+      "a": {"label": "Laminate", "points": ["Scratch & stain resistant", "Kitchens, kids' rooms", "Lower cost"], "score": 85},
+      "b": {"label": "Veneer", "points": ["Real wood grain", "Living room, statement walls", "Needs polish care"], "score": 60},
+      "verdict": "Daily use → laminate. Wow factor → veneer."},
+    {"type": "mythfact", "bars": 2, "myth": "Veneer is always premium", "fact": "Bad polish makes veneer look cheap in a year.", "note": "Finish quality matters more than the material name."},
+    {"type": "checklist", "bars": 2, "lines": ["Before you", "choose"], "items": ["Where will it be used?", "Kids or pets at home?", "Maintenance you can do", "Budget per sq.ft"]},
+    {"type": "drawing", "bars": 2, "kicker": "Made in our workshop", "lines": ["Wardrobes", "built to last"], "art": "wardrobe", "sub": "Panel saw · edge bander · cold press"},
+    {"type": "counters", "bars": 1, "kicker": "Since 2018", "items": [{"value": 110, "suffix": "+", "label": "projects delivered"}, {"value": 5000, "label": "sq.ft own workshop"}]},
+    {"type": "cta", "bars": 1}
+  ]
+}

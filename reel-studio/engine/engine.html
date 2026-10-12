@@ -1,0 +1,251 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Cinzel;font-weight:500;src:url(../node_modules/@fontsource/cinzel/files/cinzel-latin-500-normal.woff2)}
+@font-face{font-family:Cinzel;font-weight:700;src:url(../node_modules/@fontsource/cinzel/files/cinzel-latin-700-normal.woff2)}
+@font-face{font-family:Mont;font-weight:400;src:url(../node_modules/@fontsource/montserrat/files/montserrat-latin-400-normal.woff2)}
+@font-face{font-family:Mont;font-weight:600;src:url(../node_modules/@fontsource/montserrat/files/montserrat-latin-600-normal.woff2)}
+@font-face{font-family:Mont;font-weight:800;src:url(../node_modules/@fontsource/montserrat/files/montserrat-latin-800-normal.woff2)}
+:root{--tan:#B89C79;--cream:#F6F0E7;--brown:#5E4B38;--esp:#221B15;--gold:#C9A46A}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden}
+.scene{position:absolute;inset:0;overflow:hidden;visibility:hidden}
+.t-cream{--bg:var(--cream);--ink:var(--brown);--acc:var(--tan);--soft:rgba(94,75,56,.08)}
+.t-espresso{--bg:var(--esp);--ink:var(--cream);--acc:var(--gold);--soft:rgba(246,240,231,.06)}
+.t-tan{--bg:var(--tan);--ink:var(--cream);--acc:var(--esp);--soft:rgba(255,255,255,.10)}
+.scene{background:var(--bg);color:var(--ink)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(var(--soft) 1px,transparent 1px),linear-gradient(90deg,var(--soft) 1px,transparent 1px);background-size:54px 54px}
+.abs{position:absolute}
+.serif{font-family:Cinzel;font-weight:700;line-height:1.05}
+.sans{font-family:Mont;font-weight:600}
+.kicker{font-family:Mont;font-weight:600;font-size:30px;letter-spacing:10px;text-transform:uppercase;color:var(--acc)}
+.mask{overflow:hidden;padding-bottom:6px}
+.mark{background:var(--ink);-webkit-mask:url(../assets/mono_white.png) center/contain no-repeat;mask:url(../assets/mono_white.png) center/contain no-repeat}
+svg .d{fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+svg .t{fill:none;stroke:var(--acc);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.card{background:var(--soft);border:2px solid var(--acc);border-radius:10px}
+.chip{display:inline-block;font-family:Mont;font-weight:800;font-size:28px;letter-spacing:6px;padding:10px 22px;border-radius:40px;background:var(--acc);color:var(--bg)}
+.bar{height:16px;border-radius:8px;background:var(--acc)}
+#wm{position:absolute;top:120px;right:70px;width:74px;height:80px;z-index:50;opacity:.85;--ink:#C9A46A}
+#prog{position:absolute;left:0;top:0;height:6px;background:var(--gold);z-index:60;width:0}
+</style></head>
+<body><div id="stage"><div id="prog"></div><div id="wm" class="mark"></div></div>
+<script src="../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="art.js"></script>
+<script>
+const SPEC = window.SPEC || {scenes:[{type:"logo"},{type:"cta"}]};
+const BPM = SPEC.bpm || 100, BAR = 240 / BPM;
+const stage = document.getElementById('stage');
+const tl = gsap.timeline({paused:true});
+const el = (tag, cls, html, style) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; if (style) e.style.cssText = style; return e; };
+const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const themes = ['cream','espresso','tan'];
+const videos = [];
+
+function fit(node, maxW, minPx) { // shrink font until it fits one line width
+  let fs = parseFloat(getComputedStyle(node).fontSize);
+  while (node.scrollWidth > maxW && fs > (minPx || 40)) { fs -= 4; node.style.fontSize = fs + 'px'; }
+}
+function lineReveal(parent, lines, x, y, size, accentIdx, T, gap) {
+  const nodes = [];
+  lines.forEach((ln, i) => {
+    const m = el('div', 'abs mask', null, `left:${x}px;top:${y}px;width:${1080 - x - 70}px`);
+    const t = el('div', 'serif', esc(ln), `display:inline-block;font-size:${size}px;white-space:nowrap;color:${i === accentIdx ? 'var(--acc)' : 'var(--ink)'}`);
+    m.appendChild(t); parent.appendChild(m); fit(t, 1080 - x - 80, 48);
+    y += t.offsetHeight + (gap ?? 14); nodes.push(t);
+    gsap.set(t, {yPercent: 110});
+    tl.to(t, {yPercent: 0, duration: .7, ease: 'power4.out'}, T + .1 + i * .18);
+  });
+  return y;
+}
+function drawArt(parent, name, x, y, w, T, dur) {
+  const a = ART[name] || ART.kitchen; const h = w * 820 / 900;
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 900 820'); svg.setAttribute('width', w); svg.setAttribute('height', h);
+  svg.style.cssText = `position:absolute;left:${x}px;top:${y}px`;
+  const paths = [];
+  for (const [cls, list] of [['d', a.d], ['t', a.t]]) for (const d of list) {
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', d); p.setAttribute('class', cls); svg.appendChild(p); paths.push(p);
+  }
+  parent.appendChild(svg);
+  paths.forEach(p => { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; });
+  tl.to(paths, {strokeDashoffset: 0, duration: Math.min(1.6, dur * .55), ease: 'power2.inOut', stagger: Math.min(.14, dur * .5 / paths.length)}, T + .4);
+  return y + h;
+}
+function fadeUp(node, T, d) { gsap.set(node, {opacity: 0, y: 30}); tl.to(node, {opacity: 1, y: 0, duration: d || .5, ease: 'power3.out'}, T); }
+
+// ---------- scene builders: (scene, root, T, D) ----------
+const B = {
+  logo(s, r, T, D) {
+    r.className += ' t-tan';
+    const m = el('div', 'abs mark', null, 'left:300px;top:520px;width:480px;height:520px;--ink:var(--cream)'); r.appendChild(m);
+    const w = el('div', 'abs serif', 'CARNIVAL', 'width:1080px;top:1120px;text-align:center;font-size:120px;font-weight:500;letter-spacing:60px;color:var(--cream)'); r.appendChild(w);
+    const g = el('div', 'abs sans', esc(s.tagline || 'DESIGN YOUR HERITAGE'), 'width:1080px;top:1275px;text-align:center;font-size:30px;letter-spacing:12px;color:var(--cream)'); r.appendChild(g);
+    gsap.set(m, {opacity: 0, scale: .8, y: 40}); gsap.set([w, g], {opacity: 0});
+    tl.to(m, {opacity: 1, scale: 1, y: 0, duration: 1, ease: 'power3.out'}, T + .1)
+      .to(w, {opacity: 1, letterSpacing: '16px', duration: 1.1, ease: 'power3.out'}, T + .45)
+      .to(g, {opacity: 1, duration: .6}, T + 1.0);
+  },
+  headline(s, r, T, D) {
+    if (s.kicker) { const k = el('div', 'abs kicker', esc(s.kicker), 'left:90px;top:330px'); r.appendChild(k); fadeUp(k, T); }
+    let y = lineReveal(r, s.lines || [s.title || ''], 86, 400, s.size || 128, s.accent ?? 1, T);
+    const rule = el('div', 'abs', null, `left:90px;top:${y + 30}px;height:6px;width:0;background:var(--acc)`); r.appendChild(rule);
+    tl.to(rule, {width: 300, duration: .8, ease: 'power3.out'}, T + .6);
+    if (s.sub) { const sb = el('div', 'abs sans', esc(s.sub), `left:90px;top:${y + 80}px;width:880px;font-size:44px;line-height:1.4`); r.appendChild(sb); fadeUp(sb, T + .9); }
+    if (s.art) drawArt(r, s.art, 240, Math.max(y + 300, 900), 600, T + .3, D);
+  },
+  drawing(s, r, T, D) {
+    if (s.kicker) { const k = el('div', 'abs kicker', esc(s.kicker), 'left:90px;top:260px'); r.appendChild(k); fadeUp(k, T); }
+    let y = lineReveal(r, s.lines || [s.title || ''], 86, 320, s.size || 110, s.accent ?? 1, T);
+    if (s.sub) { const sb = el('div', 'abs sans', esc(s.sub), `left:90px;top:${y + 20}px;width:900px;font-size:38px;line-height:1.45`); r.appendChild(sb); fadeUp(sb, T + 1.2); y += 140; }
+    drawArt(r, s.art || 'kitchen', 140, Math.min(Math.max(y + 60, 760), 820), 800, T, D);
+  },
+  versus(s, r, T, D) {
+    let y = lineReveal(r, [s.title || 'A vs B'], 86, 280, 100, -1, T);
+    const sides = [s.a || {}, s.b || {}];
+    sides.forEach((sd, i) => {
+      const x = i ? 560 : 90;
+      const c = el('div', 'abs card', null, `left:${x}px;top:${y + 60}px;width:430px;height:720px;padding:40px 34px`);
+      const lab = el('div', 'serif', esc(sd.label || (i ? 'B' : 'A')), 'display:inline-block;white-space:nowrap;font-size:84px;color:var(--ink)'); c.appendChild(lab);
+      const ul = el('div', 'sans', null, 'margin-top:30px;font-size:34px;line-height:1.45');
+      (sd.points || []).forEach(pt => { const li = el('div', null, (i ? '— ' : '— ') + esc(pt), 'margin-bottom:18px'); ul.appendChild(li); });
+      c.appendChild(ul);
+      const bw = el('div', 'abs', null, 'left:34px;bottom:50px;width:362px;height:16px;border-radius:8px;background:var(--soft)');
+      const bar = el('div', 'bar', null, 'width:0'); bw.appendChild(bar); c.appendChild(bw);
+      r.appendChild(c); fit(lab, 360, 40);
+      gsap.set(c, {opacity: 0, x: i ? 120 : -120});
+      tl.to(c, {opacity: 1, x: 0, duration: .6, ease: 'power3.out'}, T + .4 + i * .25)
+        .from(ul.children, {opacity: 0, y: 16, duration: .35, stagger: .18}, T + .8 + i * .25)
+        .to(bar, {width: (sd.score ?? 50) + '%', duration: .9, ease: 'power2.out'}, T + 1.6);
+    });
+    if (s.verdict) {
+      const v = el('div', 'abs', `<span class="chip">VERDICT</span><div class="serif" style="font-size:56px;margin-top:18px">${esc(s.verdict)}</div>`, `left:90px;top:${y + 830}px;width:900px`);
+      r.appendChild(v); fadeUp(v, T + D * .62);
+      tl.from(v.querySelector('.chip'), {scale: .6, duration: .4, ease: 'back.out(2)'}, T + D * .62);
+    }
+  },
+  mythfact(s, r, T, D) {
+    const m = el('div', 'abs', `<span class="chip" style="background:var(--ink)">MYTH</span><div class="serif mt" style="font-size:76px;margin-top:26px;position:relative;display:inline-block;white-space:normal;max-width:900px">${esc(s.myth)}<div class="strike" style="position:absolute;left:0;top:52%;height:8px;width:0;background:#B3261E"></div></div>`, 'left:90px;top:320px;width:900px');
+    r.appendChild(m); fadeUp(m, T + .1);
+    
+    tl.to(m.querySelector('.strike'), {width: '100%', duration: .5, ease: 'power2.in'}, T + D * .38);
+    tl.to(m, {opacity: .45, duration: .4}, T + D * .45);
+    const f = el('div', 'abs card', `<span class="chip">FACT</span><div class="serif" style="font-size:62px;margin-top:26px">${esc(s.fact)}</div>${s.note ? `<div class="sans" style="font-size:34px;margin-top:22px;line-height:1.45">${esc(s.note)}</div>` : ''}`, 'left:70px;top:720px;width:940px;padding:44px');
+    r.appendChild(f); gsap.set(f, {opacity: 0, y: 120});
+    tl.to(f, {opacity: 1, y: 0, duration: .6, ease: 'power4.out'}, T + D * .45);
+  },
+  checklist(s, r, T, D) {
+    let y = lineReveal(r, s.lines || [s.title || ''], 86, 280, s.size || 96, s.accent ?? 1, T);
+    const items = s.items || []; const step = Math.min(.55, (D - 1.4) / Math.max(items.length, 1));
+    y += 60;
+    items.forEach((it, i) => {
+      const row = el('div', 'abs', `<svg width="64" height="64" viewBox="0 0 64 64" style="flex:none"><rect x="4" y="4" width="56" height="56" rx="10" class="d" style="stroke-width:4"/><path d="M16 33 L28 45 L49 20" class="t" style="stroke-width:7;stroke:var(--acc)"/></svg><div class="sans" style="font-size:42px;line-height:1.3">${esc(it)}</div>`,
+        `left:90px;top:${y}px;width:920px;display:flex;gap:30px;align-items:center`);
+      r.appendChild(row); y += 128;
+      const tick = row.querySelector('path'); const L = 50; tick.style.strokeDasharray = L; tick.style.strokeDashoffset = L;
+      gsap.set(row, {opacity: 0, x: -40});
+      tl.to(row, {opacity: 1, x: 0, duration: .4, ease: 'power3.out'}, T + .7 + i * step)
+        .to(tick, {strokeDashoffset: 0, duration: .3}, T + .9 + i * step);
+    });
+  },
+  counters(s, r, T, D) {
+    if (s.kicker) { const k = el('div', 'abs kicker', esc(s.kicker), 'left:90px;top:260px'); r.appendChild(k); fadeUp(k, T); }
+    let y = 360; const obj = {};
+    (s.items || []).forEach((it, i) => {
+      const box = el('div', 'abs', `<div class="serif" style="font-size:150px"><span class="n">0</span>${esc(it.suffix || '')}</div><div class="sans" style="font-size:34px;letter-spacing:6px;color:var(--acc);text-transform:uppercase">${esc(it.label)}</div>`, `left:90px;top:${y}px`);
+      r.appendChild(box); y += 320;
+      gsap.set(box, {opacity: 0, x: -40}); tl.to(box, {opacity: 1, x: 0, duration: .4}, T + .1 + i * .2);
+      const n = box.querySelector('.n'); obj['v' + i] = 0;
+      tl.to(obj, {['v' + i]: it.value, duration: Math.min(1.4, D * .6), ease: 'power2.out', onUpdate: () => n.textContent = Math.round(obj['v' + i]).toLocaleString('en-IN')}, T + .2);
+    });
+  },
+  media(s, r, T, D) {
+    const isV = /\.(mp4|mov|webm)(\?|$)/i.test(s.src || '');
+    const m = isV ? el('video', null, null, 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover') : el('img', null, null, 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover');
+    m.src = s.src; if (isV) { m.muted = true; m.preload = 'auto'; videos.push({v: m, T, D, from: s.from || 0}); }
+    r.appendChild(m);
+    tl.fromTo(m, {scale: 1.12}, {scale: 1.0, duration: D, ease: 'none'}, T);
+    r.appendChild(el('div', 'abs', null, 'left:0;right:0;bottom:0;height:1100px;background:linear-gradient(to top,rgba(20,15,11,.92),rgba(20,15,11,0))'));
+    const box = el('div', 'abs', `${s.stage ? `<span class="chip">${esc(String(s.stage).toUpperCase())}</span>` : ''}<div class="serif" style="font-size:78px;color:#F6F0E7;margin-top:22px">${esc(s.caption || '')}</div>${s.sub ? `<div class="sans" style="font-size:36px;color:#F6F0E7;margin-top:18px;line-height:1.4">${esc(s.sub)}</div>` : ''}`, 'left:90px;top:1030px;width:900px');
+    r.appendChild(box); fadeUp(box, T + .4, .6);
+  },
+  beforeafter(s, r, T, D) {
+    const a = el('img', null, null, 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover'); a.src = s.before;
+    const b = el('img', null, null, 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(0 100% 0 0)'); b.src = s.after;
+    const line = el('div', 'abs', null, 'top:0;bottom:0;width:8px;background:var(--gold);left:0');
+    r.append(a, b, line);
+    const lb = el('div', 'abs', '<span class="chip">BEFORE</span>', 'left:90px;top:300px'); const la = el('div', 'abs', '<span class="chip">AFTER</span>', 'right:90px;top:300px');
+    r.append(lb, la); gsap.set(la, {opacity: 0});
+    const st = {p: 0};
+    tl.to(st, {p: 100, duration: D * .6, ease: 'power2.inOut', onUpdate: () => { b.style.clipPath = `inset(0 ${100 - st.p}% 0 0)`; line.style.left = (st.p * 10.8 - 4) + 'px'; }}, T + D * .2)
+      .to(lb, {opacity: 0, duration: .3}, T + D * .6).to(la, {opacity: 1, duration: .3}, T + D * .6);
+    if (s.caption) { r.appendChild(el('div', 'abs', null, 'left:0;right:0;bottom:0;height:700px;background:linear-gradient(to top,rgba(20,15,11,.9),transparent)')); const c = el('div', 'abs serif', esc(s.caption), 'left:90px;top:1200px;width:900px;font-size:70px;color:#F6F0E7'); r.appendChild(c); fadeUp(c, T + D * .7); }
+  },
+  quote(s, r, T, D) {
+    const q = el('div', 'abs serif', '“', 'left:70px;top:260px;font-size:300px;color:var(--acc);line-height:1'); r.appendChild(q); fadeUp(q, T);
+    const t = el('div', 'abs serif', esc(s.text), 'left:90px;top:520px;width:900px;font-size:70px;font-weight:500;line-height:1.25'); r.appendChild(t);
+    const words = t.textContent.split(' '); t.innerHTML = words.map(w => `<span style="display:inline-block;opacity:0">${esc(w)}&nbsp;</span>`).join('');
+    tl.to(t.children, {opacity: 1, duration: .25, stagger: Math.min(.12, (D * .6) / words.length)}, T + .3);
+    if (s.by) { const b = el('div', 'abs sans', '— ' + esc(s.by), 'left:90px;top:1250px;font-size:36px;color:var(--acc)'); r.appendChild(b); fadeUp(b, T + D * .65); }
+  },
+  cta(s, r, T, D) {
+    r.className += ' t-tan';
+    const m = el('div', 'abs mark', null, 'left:395px;top:430px;width:290px;height:315px;--ink:var(--cream)'); r.appendChild(m);
+    r.appendChild(el('div', 'abs serif', 'CARNIVAL', 'width:1080px;top:800px;text-align:center;font-size:96px;font-weight:500;letter-spacing:12px;color:var(--cream)'));
+    r.appendChild(el('div', 'abs sans', esc(s.tagline || 'INTERIORS · FABRICATION · PUNE'), 'width:1080px;top:925px;text-align:center;font-size:28px;letter-spacing:10px;color:var(--cream)'));
+    const card = el('div', 'abs', `<div class="serif" style="font-size:54px;color:var(--brown)">${esc(s.line1 || 'Comment “QUOTE”')}</div><div class="sans" style="font-size:32px;margin-top:10px;color:var(--tan)">${esc(s.line2 || 'for a free site visit')}</div>`, 'left:140px;top:1080px;width:800px;padding:40px 0;background:var(--cream);text-align:center;border-radius:8px');
+    r.appendChild(card);
+    const wa = el('div', 'abs sans', esc(s.line3 || 'WhatsApp 95277 10036'), 'width:1080px;top:1300px;text-align:center;font-size:36px;color:var(--cream)'); r.appendChild(wa);
+    gsap.set(m, {opacity: 0, scale: .7}); gsap.set([card, wa], {opacity: 0, y: 30});
+    tl.to(m, {opacity: 1, scale: 1, duration: .7, ease: 'back.out(1.6)'}, T + .1)
+      .to(card, {opacity: 1, y: 0, duration: .5, ease: 'power3.out'}, T + .45)
+      .to(wa, {opacity: 1, y: 0, duration: .4}, T + .75)
+      .to(card, {scale: 1.04, duration: .3, yoyo: true, repeat: 1, ease: 'sine.inOut'}, T + 1.3);
+  },
+};
+
+// ---------- assemble ----------
+function build() {
+const TRANS = ['up', 'left', 'circle', 'sweep'];
+let T = 0, ti = 0; const cuts = [];
+SPEC.scenes.forEach((s, i) => {
+  const D = (s.bars || (s.type === 'logo' || s.type === 'cta' ? 1 : 2)) * BAR;
+  const r = el('div', 'scene t-' + (s.bg || themes[(i + (SPEC.themeOffset || 0)) % 3]));
+  r.appendChild(el('div', 'grid'));
+  stage.insertBefore(r, document.getElementById('prog'));
+  (B[s.type] || B.headline)(s, r, T, D);
+  const kind = i === 0 ? 'none' : TRANS[(ti++ + (SPEC.transOffset || 0)) % TRANS.length];
+  tl.set(r, {visibility: 'visible'}, T);
+  if (kind === 'up') tl.fromTo(r, {yPercent: 100}, {yPercent: 0, duration: .45, ease: 'power3.out'}, T);
+  if (kind === 'left') tl.fromTo(r, {xPercent: 100}, {xPercent: 0, duration: .45, ease: 'power3.out'}, T);
+  if (kind === 'circle') tl.fromTo(r, {clipPath: 'circle(0% at 50% 50%)'}, {clipPath: 'circle(75% at 50% 50%)', duration: .55, ease: 'power2.inOut'}, T);
+  if (kind === 'sweep') tl.fromTo(r, {clipPath: 'inset(0 0 100% 0)'}, {clipPath: 'inset(0 0 0% 0)', duration: .5, ease: 'power3.inOut'}, T);
+  const next = T + D;
+  if (i < SPEC.scenes.length - 1) tl.set(r, {visibility: 'hidden'}, next + .56);
+  if (i > 0) cuts.push(+T.toFixed(2));
+  // watermark only on content scenes
+  T = next;
+});
+const DUR = T;
+tl.to('#prog', {width: '1080px', duration: DUR, ease: 'none'}, 0);
+// watermark visibility per scene
+SPEC.scenes.forEach((s, i) => {});
+let acc = 0; SPEC.scenes.forEach(s => { const D = (s.bars || (s.type === 'logo' || s.type === 'cta' ? 1 : 2)) * BAR; tl.set('#wm', {opacity: (s.type === 'logo' || s.type === 'cta' || s.type === 'media' || s.type === 'beforeafter') ? 0 : .85}, acc); acc += D; });
+tl.set({}, {}, DUR);
+window.DURATION = DUR;
+window.CUTS = cuts;
+}
+window.seek = async t => {
+  tl.seek(t, false);
+  await Promise.all(videos.map(o => new Promise(res => {
+    const lt = Math.max(0, Math.min(t - o.T, o.D)) + o.from;
+    if (Math.abs(o.v.currentTime - lt) < 0.01 || !o.v.duration) return res();
+    o.v.addEventListener('seeked', res, {once: true}); o.v.currentTime = Math.min(lt, o.v.duration - 0.05); setTimeout(res, 1500);
+  })));
+};
+window.ready = Promise.all(['500 50px Cinzel','700 50px Cinzel','400 20px Mont','600 20px Mont','800 20px Mont'].map(f => document.fonts.load(f))).then(() => document.fonts.ready).then(() => build()).then(() => Promise.all([
+  ...[...document.images].map(i => i.decode().catch(() => {})),
+  ...videos.map(o => new Promise(res => { if (o.v.readyState >= 2) return res(); o.v.addEventListener('loadeddata', res, {once: true}); setTimeout(res, 8000); }))
+]));
+</script></body></html>

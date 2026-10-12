@@ -1,0 +1,10 @@
+{"bpm":100,"themeOffset":0,"transOffset":3,"scenes":[
+{"type":"headline","bars":1,"kicker":"Plywood guide","lines":["Your kitchen","ply is wrong?"],"accent":1,"sub":"BWP or MR. Pick wrong and the sink base swells."},
+{"type":"versus","bars":2,"bg":"espresso","title":"BWP vs MR ply",
+ "a":{"label":"BWP","points":["Boiling water proof","Sink base, washroom vanity","Costs more"],"score":90},
+ "b":{"label":"MR","points":["Moisture resistant only","Wardrobes, dry areas","Lower cost"],"score":60},
+ "verdict":"Wet zone → BWP. Dry zone → MR."},
+{"type":"drawing","bars":2,"kicker":"Where it matters","lines":["Sink and hob","zones get BWP"],"art":"kitchen","sub":"Rest of the kitchen can be MR"},
+{"type":"mythfact","bars":2,"myth":"Laminate on top makes MR waterproof","fact":"Water enters from edges and cut-outs.","note":"Machine edge banding helps. Board grade still matters."},
+{"type":"checklist","bars":1,"lines":["Ask your","contractor"],"items":["Board grade in writing","Brand on every sheet","Edge banding by machine"]},
+{"type":"cta","bars":1}]}

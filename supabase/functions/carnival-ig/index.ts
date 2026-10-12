@@ -225,7 +225,7 @@ Deno.serve(async (req) => {
       if (tokenSet) {
         try { limit = (await graph(`${await kv("ig_user_id")}/content_publishing_limit`, "GET", { fields: "quota_usage,config" })).data?.[0]; } catch { /* ignore */ }
       }
-      const { data: posts } = await sb.from("cig_posts").select("id,created_at,scheduled_at,media_type,media_urls,caption,status,permalink,error,source")
+      const { data: posts } = await sb.from("cig_posts").select("id,created_at,scheduled_at,media_type,media_urls,caption,status,permalink,error,source,title,theme")
         .order("scheduled_at", { ascending: false }).limit(40);
       const { data: logs } = await sb.from("cig_log").select("at,level,msg").order("at", { ascending: false }).limit(15);
       const { data: comments } = await sb.from("cig_comments").select("username,text,action,created_at").order("created_at", { ascending: false }).limit(15);
@@ -236,6 +236,14 @@ Deno.serve(async (req) => {
         tokenSet, username: await kv("ig_username"), tokenSetAt: await kv("token_set_at"), limit, posts, logs, comments,
         settings: { keyword: await kv("keyword"), public_reply: await kv("public_reply"), dm_text: await kv("dm_text") },
       });
+    }
+
+    if (action === "queue") {
+      const from = new Date(Date.now() - Number(body.past_hours ?? 24) * 3600000).toISOString();
+      const to = new Date(Date.now() + Number(body.days ?? 10) * 86400000).toISOString();
+      const { data } = await sb.from("cig_posts").select("id,scheduled_at,media_type,status,title,theme,source,permalink,error")
+        .gte("scheduled_at", from).lte("scheduled_at", to).neq("status", "cancelled").order("scheduled_at").limit(300);
+      return json({ ok: true, posts: data });
     }
 
     if (action === "set_token") {

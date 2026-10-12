@@ -1,0 +1,8 @@
+{"slides":[
+ {"type":"cover","size":88,"kicker":"For plant & admin heads","title":"4 factory floor upgrades and what each one solves","sub":"Built in our own workshop","art":"mezzanine"},
+ {"type":"point","n":"01","title":"Mezzanine floor","body":"Adds usable area using height you already have. Storage, cabins or QC above.","art":"mezzanine"},
+ {"type":"point","n":"02","title":"Storage racks","body":"Sized to your bins and pallets. ESD-safe versions for electronics lines.","art":"rack"},
+ {"type":"point","n":"03","title":"Material trolleys","body":"Move WIP between stations without lifting. Castors and shelves to your load.","art":"trolley"},
+ {"type":"point","n":"04","title":"Office and partitions","body":"Shop-floor cabins, meeting rooms and grid ceilings with service access.","art":"office"},
+ {"type":"cta"}
+]}

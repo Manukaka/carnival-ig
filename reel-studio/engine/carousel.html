@@ -34,14 +34,14 @@ function artSvg(name, w){ const a = ART[name] || ART.kitchen; return `<svg width
 SPEC.slides.forEach((s, i) => {
   const d = document.createElement('div'); d.className = 'slide t-' + (s.bg || (s.type === 'cover' ? 'espresso' : s.type === 'cta' ? 'tan' : th[i % 2 ? 0 : 0]));
   let h = '<div class="grid"></div><div class="rel">';
-  if (s.type === 'cover') h += `<div class="kicker">${esc(s.kicker || 'Carnival guide')}</div><div class="serif" style="font-size:${s.size||104}px;margin-top:40px">${esc(s.title)}</div>${s.sub?`<div class="sans" style="font-size:40px;margin-top:40px;color:var(--acc)">${esc(s.sub)}</div>`:''}${s.art?`<div style="margin-top:60px">${artSvg(s.art, 640)}</div>`:''}`;
+  if (s.type === 'cover') h += `<div class="kicker">${esc(s.kicker || 'Carnival guide')}</div><div class="serif" style="font-size:${s.size||104}px;margin-top:40px">${esc(s.title)}</div>${s.sub?`<div class="sans" style="font-size:40px;margin-top:40px;color:var(--acc)">${esc(s.sub)}</div>`:''}${s.art?`<div style="margin-top:40px">${artSvg(s.art, 400)}</div>`:''}`;
   if (s.type === 'point') h += `<div class="num">${esc(s.n ?? i)}</div><div class="serif" style="font-size:${s.size||76}px;margin-top:30px">${esc(s.title)}</div><div class="sans" style="font-size:40px;margin-top:36px">${esc(s.body || '')}</div>${s.art?`<div style="margin-top:50px">${artSvg(s.art, 520)}</div>`:''}`;
   if (s.type === 'mythfact') h += `<span class="chip" style="background:var(--ink)">MYTH</span><div class="serif" style="font-size:64px;margin-top:24px;text-decoration:line-through;text-decoration-color:#B3261E;opacity:.6">${esc(s.myth)}</div><div style="margin-top:70px"><span class="chip">FACT</span><div class="serif" style="font-size:64px;margin-top:24px">${esc(s.fact)}</div></div>`;
   if (s.type === 'cta') h += `<div class="mark" style="--ink:var(--cream);width:220px;height:240px;margin:60px auto 0"></div><div class="serif" style="text-align:center;font-weight:500;font-size:84px;letter-spacing:10px;margin-top:40px;color:var(--cream)">CARNIVAL</div><div class="sans" style="text-align:center;font-size:26px;letter-spacing:10px;color:var(--cream)">INTERIORS · FABRICATION · PUNE</div><div style="margin:70px auto 0;width:820px;background:var(--cream);border-radius:8px;padding:40px;text-align:center"><div class="serif" style="font-size:54px;color:var(--brown)">${esc(s.line1 || 'Comment “QUOTE”')}</div><div class="sans" style="font-size:32px;color:var(--tan)">${esc(s.line2 || 'for a free site visit')}</div></div><div class="sans" style="text-align:center;font-size:34px;margin-top:40px;color:var(--cream)">${esc(s.line3 || 'WhatsApp 95277 10036 · Save this post')}</div>`;
   h += '</div>';
   if (s.type === 'cover') h += `<div class="sans" style="position:absolute;right:90px;bottom:130px;font-size:30px;letter-spacing:6px;color:var(--acc)">SWIPE →</div>`;
   if (s.type === 'point' && !s.art) h += `<div class="mark" style="position:absolute;right:-60px;bottom:-40px;width:520px;height:560px;opacity:.10"></div>`;
-  if (s.type !== 'cta') h += `<div class="foot"><span>CARNIVAL ENTERPRISES</span><span>${i+1} / ${N}</span></div>`;
+  if (s.type !== 'cta') h += `<div class="foot"><span>CARNIVAL ENTERPRISES</span><span>${N === 1 ? 'COMMENT “QUOTE”' : (i+1) + ' / ' + N}</span></div>`;
   d.innerHTML = h; document.body.appendChild(d);
 });
 window.COUNT = N;

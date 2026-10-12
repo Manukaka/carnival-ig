@@ -1,0 +1,9 @@
+{"bpm":100,"themeOffset":0,"transOffset":2,"scenes":[
+{"type":"headline","bars":1,"kicker":"False ceiling","lines":["Gypsum","or grid?"],"accent":1,"sub":"Same ceiling, very different use."},
+{"type":"versus","bars":2,"bg":"espresso","title":"Gypsum vs Grid",
+ "a":{"label":"Gypsum","points":["Seamless finish","Coves and profile lights","Homes, cafés, showrooms"],"score":80},
+ "b":{"label":"Grid tiles","points":["Lift a tile to reach services","Quick to repair","Offices, factories"],"score":80},
+ "verdict":"Looks first → gypsum. Access first → grid."},
+{"type":"drawing","bars":2,"kicker":"Plan before you cover","lines":["AC, lights, sprinklers","fixed first"],"art":"ceiling","sub":"Then the ceiling closes"},
+{"type":"mythfact","bars":2,"myth":"Ceiling is the last job","fact":"Ceiling layout decides your light and AC points.","note":"Freeze it with the electrical plan."},
+{"type":"cta","bars":1}]}

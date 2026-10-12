@@ -1,0 +1,7 @@
+{"bpm":100,"themeOffset":1,"transOffset":0,"scenes":[
+{"type":"headline","bars":1,"kicker":"Office fit-out","lines":["Your team","sits here 9 hours"],"accent":1,"sub":"Plan the office around work, not around furniture."},
+{"type":"drawing","bars":2,"kicker":"Workstations","lines":["Desks, storage,","cable paths"],"art":"office","sub":"Wire management planned before fabrication"},
+{"type":"checklist","bars":2,"bg":"espresso","lines":["Plan these","first"],"items":["Seats now and in 2 years","Power and data points","Meeting room count","Pantry and storage"]},
+{"type":"mythfact","bars":2,"myth":"All furniture is made on site","fact":"We build in our workshop. Site time is mostly fitting.","note":"Less dust and noise at your office."},
+{"type":"drawing","bars":2,"kicker":"Ceilings too","lines":["Grid ceiling for","easy service access"],"art":"ceiling","sub":"AC, lights and data above, reachable later"},
+{"type":"cta","bars":1,"line2":"for a free office visit"}]}

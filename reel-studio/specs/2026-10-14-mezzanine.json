@@ -1,0 +1,10 @@
+{"bpm":100,"themeOffset":2,"transOffset":2,"scenes":[
+{"type":"headline","bars":1,"kicker":"Out of space?","lines":["Go up.","Not out."],"accent":0,"sub":"A mezzanine adds a full floor inside your existing shed."},
+{"type":"drawing","bars":2,"kicker":"Steel mezzanine","lines":["A second floor,","no new building"],"art":"mezzanine","sub":"Storage · office cabins · QC area"},
+{"type":"checklist","bars":2,"lines":["Check before","you build"],"items":["Load per sq.ft it must carry","Column spacing on your floor","Staircase and handrail","Lighting and fire exit"]},
+{"type":"versus","bars":2,"bg":"espresso","title":"Mezzanine vs new shed",
+ "a":{"label":"Mezzanine","points":["Uses height you already have","Faster to install","No new land"],"score":85},
+ "b":{"label":"New shed","points":["More land and civil work","Longer timeline","Higher cost"],"score":45},
+ "verdict":"Unused height → mezzanine first."},
+{"type":"counters","bars":1,"kicker":"Since 2018","items":[{"value":110,"suffix":"+","label":"projects delivered"},{"value":5000,"label":"sq.ft own workshop"}]},
+{"type":"cta","bars":1,"line2":"for a free site visit"}]}
